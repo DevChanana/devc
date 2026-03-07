@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>KBC Quiz Game</title>
+    <style>
+        body {
+            font-family: Arial;
+            background: #0b1a3a;
+            color: white;
+            text-align: center;
+            padding: 30px;
+        }
+
+        #quiz {
+            background: #162a63;
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 500px;
+            margin: auto;
+        }
+
+        button {
+            display: block;
+            width: 100%;
+            margin: 10px 0;
+            padding: 10px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #ffd700;
+            color: black;
+        }
+
+        #timer {
+            font-size: 20px;
+            margin: 10px;
+            color: #ffd700;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>🎮 KBC Quiz Game</h1>
+
+    <div id="quiz">
+
+        <div id="level"></div>
+        <h2 id="question"></h2>
+
+        <div id="options"></div>
+
+        <div id="timer"></div>
+
+        <h3 id="money"></h3>
+        <p id="result"></p>
+
+    </div>
+
+    <script>
+
+        let level = 0
+        let money = 0
+        let timer
+        let timeLeft = 10
+
+        const questions = [
+
+            {
+                q: "WHO LOVES NAVYA THE MOST",
+                options: ["A. INSANSE SPY", "B. VOLUTLLA", "C. NAVYA KA PATI", "D. NAVYA KE GHARWALE"],
+                answer: "C",
+                prize: 1000
+            },
+
+            {
+                q: "WHAT IS AGE OF NAVYA",
+                options: ["A. 190", "B. 40", "C. 16", "D. 12"],
+                answer: "D",
+                prize: 2000
+            },
+
+            {
+                q: "IS INSANESPY GAY (HAPPY)",
+                options: ["A. YES", "B. DEFINATELY YES", "C. MAYBE", "D. NAAAAHHHHHHHHHH"],
+                answer: "D",
+                prize: 4000
+            },
+
+            {
+                q: "IF INSANE LOVES NAVYA THEN SOLVE IN 10 SECONDS<br>234 + (1/2 × 100) - 3467",
+                options: ["A. -3222", "B. -3183", "C. -9423", "D. 3212"],
+                answer: "B",
+                prize: 32000
+            }
+
+        ]
+
+        function loadQuestion() {
+
+            clearInterval(timer)
+
+            let q = questions[level]
+
+            document.getElementById("level").innerText = "Level: " + (level + 1)
+            document.getElementById("question").innerHTML = q.q
+            document.getElementById("money").innerText = "Money: ₹" + money
+            document.getElementById("result").innerText = ""
+
+            let optionsHTML = ""
+
+            q.options.forEach(opt => {
+                let letter = opt.charAt(0)
+                optionsHTML += `<button onclick="checkAnswer('${letter}')">${opt}</button>`
+            })
+
+            document.getElementById("options").innerHTML = optionsHTML
+
+            if (q.q.includes("234")) {
+                startTimer()
+            } else {
+                document.getElementById("timer").innerText = ""
+            }
+
+        }
+
+        function startTimer() {
+
+            timeLeft = 10
+            document.getElementById("timer").innerText = "Time: " + timeLeft
+
+            timer = setInterval(() => {
+
+                timeLeft--
+                document.getElementById("timer").innerText = "Time: " + timeLeft
+
+                if (timeLeft <= 0) {
+                    clearInterval(timer)
+                    gameOver("⏰ TIME UP!")
+                }
+
+            }, 1000)
+
+        }
+
+        function checkAnswer(choice) {
+
+            let q = questions[level]
+
+            clearInterval(timer)
+
+            document.getElementById("result").innerText = "Computer Ji Lock Kiya Jaye?"
+
+            setTimeout(() => {
+
+                document.getElementById("result").innerText = "Aapka jawab..."
+
+                setTimeout(() => {
+
+                    if (choice === q.answer) {
+
+                        money += q.prize
+                        level++
+
+                        if (level < questions.length) {
+
+                            if (confirm("Correct! Continue to next question?")) {
+                                loadQuestion()
+                            } else {
+                                gameOver("Game stopped.")
+                            }
+
+                        } else {
+                            gameOver("🎉 You won ₹" + money)
+                        }
+
+                    } else {
+
+                        gameOver("❌ Wrong Answer!")
+
+                    }
+
+                }, 1000)
+
+            }, 1000)
+
+        }
+
+        function gameOver(msg) {
+
+            document.getElementById("result").innerText = msg
+            document.getElementById("options").innerHTML = ""
+            document.getElementById("timer").innerText = ""
+            document.getElementById("money").innerText = "Final Winning Amount: ₹" + money
+
+        }
+
+        loadQuestion()
+
+    </script>
+
+</body>
+
+</html>
